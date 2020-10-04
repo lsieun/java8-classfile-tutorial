@@ -8,7 +8,6 @@ import lsieun.cst.CPConst;
 import lsieun.utils.ByteDashboard;
 import lsieun.utils.HexUtils;
 
-import java.util.Arrays;
 import java.util.Formatter;
 
 public class ClassFileStandardVisitor extends DefaultVisitor {
@@ -126,8 +125,8 @@ public class ClassFileStandardVisitor extends DefaultVisitor {
             byte[] descriptor_index_bytes = bd.nextN(2);
             byte[] attributes_count_bytes = bd.nextN(2);
             fm.format("access_flags: %s(%s)%n", HexUtils.toHex(access_flags_bytes), item.getAccessFlagsString());
-            fm.format("name_index: %s(%s)%n", HexUtils.toHex(name_index_bytes), item.name_index);
-            fm.format("descriptor_index: %s(%s)%n", HexUtils.toHex(descriptor_index_bytes), item.descriptor_index);
+            fm.format("name_index: %s(#%s)%n", HexUtils.toHex(name_index_bytes), item.name_index);
+            fm.format("descriptor_index: %s(#%s)%n", HexUtils.toHex(descriptor_index_bytes), item.descriptor_index);
             fm.format("attributes_count: %s(%s)%n", HexUtils.toHex(attributes_count_bytes), item.attributes.attributes_count);
             for (int j = 0; j < item.attributes.attributes_count; j++) {
                 AttributeInfo entry = item.attributes.entries[j];
@@ -172,5 +171,40 @@ public class ClassFileStandardVisitor extends DefaultVisitor {
             }
             System.out.println(sb);
         }
+    }
+
+    @Override
+    public void visitAttributes(Attributes obj) {
+        int count = obj.attributes_count;
+        AttributeInfo[] entries = obj.entries;
+
+        String countLine = String.format("attributes_count='%s' (%d)", obj.hex(), count);
+        System.out.println(countLine);
+
+        System.out.println("attributes");
+        for (int i = 0; i < count; i++) {
+            AttributeInfo item = entries[i];
+            String hexCode = item.hex();
+            String attrName = item.name;
+            System.out.println(String.format("--->|%03d| %s:", i, attrName));
+            System.out.println("HexCode: " + hexCode);
+            item.accept(this);
+        }
+    }
+
+    @Override
+    public void visitAttributeInfo(AttributeInfo obj) {
+        byte[] bytes = obj.bytes;
+        ByteDashboard bd = new ByteDashboard(bytes);
+        int attribute_name_index = obj.attribute_name_index;
+        int attribute_length = obj.attribute_length;
+
+        String format = "%s='%s' (%s)%n";
+        StringBuilder sb = new StringBuilder();
+        Formatter fm = new Formatter(sb);
+        fm.format(format, "attribute_name_index", HexUtils.toHex(bd.nextN(2)), "#" + attribute_name_index);
+        fm.format(format, "attribute_length", HexUtils.toHex(bd.nextN(4)), attribute_length);
+        fm.format("%s='%s'%n", "info", HexUtils.toHex(bd.nextN(attribute_length)));
+        System.out.println(sb.toString());
     }
 }
