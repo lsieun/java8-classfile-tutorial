@@ -14,7 +14,7 @@ public class FunUtils {
         byte[] bytes = new byte[byte_count];
         for (int i = 0; i < byte_count; i++) {
             int newValue = value >> (i * 8);
-            byte b = (byte) (newValue & 0xff);
+            byte b = (byte) (newValue & 0xFF);
             bytes[byte_count - 1 - i] = b;
         }
 

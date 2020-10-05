@@ -6,7 +6,7 @@ import lsieun.utils.HexUtils;
 
 public class Z_E_Read_Hex {
     public static void main(String[] args) {
-        String relative_path = "fun/company_info.bin";
+        String relative_path = "fun/user_info.bin";
         String filepath = FileUtils.getFilePath(relative_path);
 
         byte[] bytes = FileUtils.readBytes(filepath);
