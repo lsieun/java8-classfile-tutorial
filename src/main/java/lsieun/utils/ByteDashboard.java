@@ -115,11 +115,6 @@ public class ByteDashboard {
         return bytes;
     }
 
-    public int peekInt(int offset, int length) {
-        byte[] bytes = peekN(offset, length);
-        return ByteUtils.bytesToInt(bytes);
-    }
-
     public void skip(int n) {
         index = index + n;
     }
