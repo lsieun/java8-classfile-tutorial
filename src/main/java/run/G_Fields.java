@@ -27,7 +27,8 @@ public class G_Fields {
         ConstantPoolUtils.print(cp);
 
         Fields fields = classfile.fields;
-        Visitor v = new ClassFileSimpleVisitor();
+        // 可以使用 ClassFileSimpleVisitor 或者 ClassFileStandardVisitor
+        Visitor v = new ClassFileStandardVisitor();
         fields.accept(v);
     }
 }

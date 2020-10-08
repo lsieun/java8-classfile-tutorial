@@ -29,7 +29,7 @@ public class H_Methods {
 
         Methods methods = classfile.methods;
         // 可以使用 ClassFileSimpleVisitor 或者 ClassFileStandardVisitor
-        Visitor method_visitor = new ClassFileSimpleVisitor();
+        Visitor method_visitor = new ClassFileStandardVisitor();
         methods.accept(method_visitor);
         System.out.println("=== === ===  === === ===  === === ===");
     }
