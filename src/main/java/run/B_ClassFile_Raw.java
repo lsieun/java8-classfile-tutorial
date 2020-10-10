@@ -16,6 +16,7 @@ public class B_ClassFile_Raw {
 
         // 第三步，处理数据
         ClassFile classfile = ClassFile.parse(bytes);
+        // 可以使用 ClassFileRawVisitor、ClassFileSimpleVisitor 或者 ClassFileStandardVisitor
         Visitor v = new ClassFileRawVisitor();
         classfile.accept(v);
     }

@@ -124,13 +124,13 @@ public class ClassFileStandardVisitor extends DefaultVisitor {
             byte[] name_index_bytes = bd.nextN(2);
             byte[] descriptor_index_bytes = bd.nextN(2);
             byte[] attributes_count_bytes = bd.nextN(2);
-            fm.format("access_flags: %s(%s)%n", HexUtils.toHex(access_flags_bytes), item.getAccessFlagsString());
-            fm.format("name_index: %s(#%s)%n", HexUtils.toHex(name_index_bytes), item.name_index);
-            fm.format("descriptor_index: %s(#%s)%n", HexUtils.toHex(descriptor_index_bytes), item.descriptor_index);
-            fm.format("attributes_count: %s(%s)%n", HexUtils.toHex(attributes_count_bytes), item.attributes.attributes_count);
+            fm.format("access_flags='%s'(%s)%n", HexUtils.toHex(access_flags_bytes), item.getAccessFlagsString());
+            fm.format("name_index='%s'(#%s)%n", HexUtils.toHex(name_index_bytes), item.name_index);
+            fm.format("descriptor_index='%s'(#%s)%n", HexUtils.toHex(descriptor_index_bytes), item.descriptor_index);
+            fm.format("attributes_count='%s'(%s)%n", HexUtils.toHex(attributes_count_bytes), item.attributes.attributes_count);
             for (int j = 0; j < item.attributes.attributes_count; j++) {
                 AttributeInfo entry = item.attributes.entries[j];
-                fm.format("--->%s%n", entry.hex());
+                fm.format("--->%s=%s%n", entry.name, entry.hex());
             }
             System.out.println(sb);
         }
@@ -161,13 +161,13 @@ public class ClassFileStandardVisitor extends DefaultVisitor {
             byte[] name_index_bytes = bd.nextN(2);
             byte[] descriptor_index_bytes = bd.nextN(2);
             byte[] attributes_count_bytes = bd.nextN(2);
-            fm.format("access_flags: %s(%s)%n", HexUtils.toHex(access_flags_bytes), item.getAccessFlagsString());
-            fm.format("name_index: %s(#%s)%n", HexUtils.toHex(name_index_bytes), item.name_index);
-            fm.format("descriptor_index: %s(#%s)%n", HexUtils.toHex(descriptor_index_bytes), item.descriptor_index);
-            fm.format("attributes_count: %s(%s)%n", HexUtils.toHex(attributes_count_bytes), item.attributes.attributes_count);
+            fm.format("access_flags='%s'(%s)%n", HexUtils.toHex(access_flags_bytes), item.getAccessFlagsString());
+            fm.format("name_index='%s'(#%s)%n", HexUtils.toHex(name_index_bytes), item.name_index);
+            fm.format("descriptor_index='%s'(#%s)%n", HexUtils.toHex(descriptor_index_bytes), item.descriptor_index);
+            fm.format("attributes_count='%s'(%s)%n", HexUtils.toHex(attributes_count_bytes), item.attributes.attributes_count);
             for (int j = 0; j < item.attributes.attributes_count; j++) {
                 AttributeInfo entry = item.attributes.entries[j];
-                fm.format("--->%s: %s%n", entry.name, entry.hex());
+                fm.format("--->%s=%s%n", entry.name, entry.hex());
             }
             System.out.println(sb);
         }
