@@ -97,29 +97,6 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         System.out.println(sb.toString());
     }
 
-    private void displayElementValue(ElementValue elementValue, ByteDashboard bd) {
-        String format = prefix + "%s='%s' (%s)";
-        System.out.println(String.format(format, "tag", HexUtils.toHex(bd.nextN(1)), (char) elementValue.type));
-        if (elementValue instanceof SimpleElementValue) {
-            SimpleElementValue simpleElementValue = (SimpleElementValue) elementValue;
-            String value = "#" + simpleElementValue.const_value_index + ": " + simpleElementValue.stringifyValue();
-            System.out.println(String.format(format, "const_value_index", HexUtils.toHex(bd.nextN(2)), value));
-        } else if (elementValue instanceof EnumElementValue) {
-            EnumElementValue enumElementValue = (EnumElementValue) elementValue;
-            System.out.println(String.format(format, "type_name_index", HexUtils.toHex(bd.nextN(2)), enumElementValue.type_name_index));
-            System.out.println(String.format(format, "const_name_index", HexUtils.toHex(bd.nextN(2)), enumElementValue.const_name_index));
-        } else if (elementValue instanceof ClassElementValue) {
-            ClassElementValue classElementValue = (ClassElementValue) elementValue;
-            System.out.println(String.format(format, "class_info_index", HexUtils.toHex(bd.nextN(2)), "#" + classElementValue.class_info_index));
-        } else if (elementValue instanceof ArrayElementValue) {
-            ArrayElementValue arrayElementValue = (ArrayElementValue) elementValue;
-            System.out.println(String.format(format, "num_values", HexUtils.toHex(bd.nextN(2)), arrayElementValue.num_values));
-            for (int i = 0; i < arrayElementValue.num_values; i++) {
-                displayElementValue(arrayElementValue.entries[i], bd);
-            }
-        }
-    }
-
     @Override
     public void visitBootstrapMethods(BootstrapMethods obj) {
         byte[] bytes = obj.bytes;
@@ -729,6 +706,11 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         } else if (element_value instanceof ClassElementValue) {
             ClassElementValue classElementValue = (ClassElementValue) element_value;
             fm.format(prefix + format, "class_info_index", HexUtils.toHex(bd.nextN(2)), "#" + classElementValue.class_info_index);
+        } else if (element_value instanceof AnnotationElementValue) {
+            AnnotationElementValue annotation_element_value = (AnnotationElementValue) element_value;
+            fm.format(prefix + format, "type_index", HexUtils.toHex(bd.nextN(2)), "#" + annotation_element_value.annotation_entry.type_index);
+            fm.format(prefix + format, "num_element_value_pairs", HexUtils.toHex(bd.nextN(2)), annotation_element_value.annotation_entry.num_element_value_pairs);
+            display_element_value_pairs(annotation_element_value.annotation_entry.element_value_pair_list, bd, fm);
         } else if (element_value instanceof ArrayElementValue) {
             ArrayElementValue arrayElementValue = (ArrayElementValue) element_value;
             fm.format(prefix + format, "num_values", HexUtils.toHex(bd.nextN(2)), arrayElementValue.num_values);
