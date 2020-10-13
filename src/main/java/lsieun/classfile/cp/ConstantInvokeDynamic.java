@@ -20,7 +20,7 @@ public final class ConstantInvokeDynamic extends Constant {
         this.bootstrap_method_attr_index = ByteUtils.bytesToInt(bootstrap_method_attr_index_bytes);
         this.name_and_type_index = ByteUtils.bytesToInt(name_and_type_index_bytes);
 
-        super.value = "#" + name_and_type_index;
+        super.value = String.format("#%d:#%d", bootstrap_method_attr_index, name_and_type_index);
         super.bytes = ByteUtils.concatenate(tag_bytes, bootstrap_method_attr_index_bytes, name_and_type_index_bytes);
     }
 
