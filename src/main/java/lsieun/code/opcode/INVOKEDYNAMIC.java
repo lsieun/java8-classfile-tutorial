@@ -18,11 +18,6 @@ public class INVOKEDYNAMIC extends Instruction implements InvokeInstruction {
         super(OpcodeConst.INVOKEDYNAMIC, 5);
     }
 
-    public INVOKEDYNAMIC(final int index) {
-        this();
-        this.index = index;
-    }
-
     @Override
     public void accept(final OpcodeVisitor v) {
         v.visitINVOKEDYNAMIC(this);
