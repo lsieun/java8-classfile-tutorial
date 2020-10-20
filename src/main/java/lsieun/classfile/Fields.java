@@ -1,6 +1,7 @@
 package lsieun.classfile;
 
 import lsieun.utils.ByteDashboard;
+import lsieun.utils.ByteUtils;
 import lsieun.vs.Visitor;
 
 public class Fields extends Node {
@@ -8,14 +9,15 @@ public class Fields extends Node {
     public final FieldInfo[] entries;
 
     public Fields(ByteDashboard bd, ConstantPool cp) {
-        super.bytes = bd.peekN(2);
+        byte[] fields_count_bytes = bd.nextN(2);
+        this.fields_count = ByteUtils.bytesToInt(fields_count_bytes);
 
-        this.fields_count = bd.readUnsignedShort();
         this.entries = new FieldInfo[fields_count];
         for (int i = 0; i < fields_count; i++) {
             FieldInfo fieldInfo = new FieldInfo(bd, cp);
             this.entries[i] = fieldInfo;
         }
+        super.bytes = fields_count_bytes;
     }
 
     public void accept(Visitor v) {
