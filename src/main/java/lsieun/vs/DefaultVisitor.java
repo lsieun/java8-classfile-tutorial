@@ -242,6 +242,11 @@ public class DefaultVisitor implements Visitor {
     }
 
     @Override
+    public void visitSourceDebugExtension(SourceDebugExtension obj) {
+        visitAttributeInfo(obj);
+    }
+
+    @Override
     public void visitSourceFile(SourceFile obj) {
         visitAttributeInfo(obj);
     }

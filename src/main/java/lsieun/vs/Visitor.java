@@ -103,6 +103,8 @@ public interface Visitor {
 
     void visitSignature(Signature obj);
 
+    void visitSourceDebugExtension(SourceDebugExtension obj);
+
     void visitSourceFile(SourceFile obj);
 
     void visitStackMapTable(StackMapTable obj);

@@ -97,6 +97,9 @@ public class AttributeInfo extends Node {
         else if ("BootstrapMethods".equals(name)) {
             instance = new BootstrapMethods(bd, cp);
         }
+        else if ("SourceDebugExtension".equals(name)) {
+            instance = new SourceDebugExtension(bd, cp);
+        }
         else {
             throw new RuntimeException("Unknown Attribute Name: " + name);
             //instance = new AttributeInfo(byteDashboard, constantPool, true);

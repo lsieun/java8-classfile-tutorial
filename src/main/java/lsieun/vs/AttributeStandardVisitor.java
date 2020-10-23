@@ -12,6 +12,7 @@ import lsieun.utils.ByteDashboard;
 import lsieun.utils.HexFormat;
 import lsieun.utils.HexUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Formatter;
 
 public class AttributeStandardVisitor extends DefaultVisitor {
@@ -732,6 +733,16 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         String format = "%s='%s' (%s)";
         System.out.println(String.format(format, "signature_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.signature_index));
 
+    }
+
+    @Override
+    public void visitSourceDebugExtension(SourceDebugExtension obj) {
+        byte[] bytes = obj.bytes;
+        ByteDashboard bd = new ByteDashboard(bytes);
+        visitAttributeCommon(obj, bd);
+
+        String format = "%s=%n%s";
+        System.out.println(String.format(format, "debug_extension", HexUtils.format(obj.debug_extension, HexFormat.FORMAT_FF_SPACE_FF_32)));
     }
 
     @Override
