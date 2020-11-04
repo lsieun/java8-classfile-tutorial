@@ -1048,6 +1048,7 @@ public class FrameVisitor implements OpcodeVisitor {
 
     @Override
     public void visitFSTORE(final FSTORE obj) {
+        frame.stack.pop();
         int index = obj.index;
         frame.locals.set(index, TypeUtils.FLOAT);
     }
@@ -1547,6 +1548,7 @@ public class FrameVisitor implements OpcodeVisitor {
 
     @Override
     public void visitLSTORE(final LSTORE obj) {
+        frame.stack.pop();
         int index = obj.index;
         frame.locals.set(index, TypeUtils.LONG);
     }
