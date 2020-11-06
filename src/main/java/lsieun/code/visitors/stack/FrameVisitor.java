@@ -1255,7 +1255,6 @@ public class FrameVisitor implements OpcodeVisitor {
         frame.stack.push(TypeUtils.INT);
     }
 
-    // FIXME: INVOKEDYNAMIC 这里不正确，需要修正
     @Override
     public void visitINVOKEDYNAMIC(final INVOKEDYNAMIC obj) {
         int n = AdvancedTypeUtils.getArgumentTypes(obj, constant_pool).length;

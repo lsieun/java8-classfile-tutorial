@@ -2,9 +2,7 @@ package lsieun.code.utils;
 
 
 import lsieun.classfile.ConstantPool;
-import lsieun.classfile.cp.ConstantClass;
-import lsieun.classfile.cp.ConstantNameAndType;
-import lsieun.classfile.cp.ConstantRef;
+import lsieun.classfile.cp.*;
 import lsieun.code.Instruction;
 import lsieun.code.facet.FieldInstruction;
 import lsieun.code.facet.InvokeInstruction;
@@ -98,8 +96,20 @@ public class AdvancedTypeUtils {
 
     private static ConstantNameAndType getNameAndType(InvokeInstruction obj, ConstantPool constant_pool) {
         int cpIndex = obj.getIndex();
-        ConstantRef constantRef = (ConstantRef)constant_pool.getConstant(cpIndex);
-        int nameAndTypeIndex = constantRef.getNameAndTypeIndex();
+        Constant cst = constant_pool.getConstant(cpIndex);
+        int nameAndTypeIndex = 0;
+        if (cst instanceof ConstantRef) {
+            ConstantRef cst_ref = (ConstantRef)cst;
+            nameAndTypeIndex = cst_ref.getNameAndTypeIndex();
+        }
+        else if(cst instanceof ConstantInvokeDynamic) {
+            ConstantInvokeDynamic cst_dynamic = (ConstantInvokeDynamic) cst;
+            nameAndTypeIndex = cst_dynamic.name_and_type_index;
+        }
+        else {
+            throw new RuntimeException("Unknown Constant: " + cst);
+        }
+
         ConstantNameAndType constant = (ConstantNameAndType) constant_pool.getConstant(nameAndTypeIndex, CPConst.CONSTANT_NameAndType);
         return constant;
     }

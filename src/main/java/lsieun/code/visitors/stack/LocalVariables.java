@@ -56,7 +56,9 @@ public class LocalVariables implements Cloneable {
             Type t = locals[i];
             fm.format("%s, ", t.toString());
         }
-        fm.format("%s", locals[max_index]);
+        if (max_index > -1) {
+            fm.format("%s", locals[max_index]);
+        }
         fm.format("]");
         return sb.toString();
     }
