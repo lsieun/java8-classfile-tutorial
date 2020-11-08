@@ -100,7 +100,7 @@ public class FrameVisitor implements OpcodeVisitor {
         Frame f = frame.getClone();
         State s = new State(0, f);
         s.from_pos_list.add(current_method_descriptor);
-        add_pre_state(s);
+        add_pre_state(0, s);
     }
 
     private void init_exception_tables(ExceptionTable[] exception_table_array) {
@@ -122,11 +122,11 @@ public class FrameVisitor implements OpcodeVisitor {
         }
     }
 
-    private void add_pre_state(State s) {
+    private void add_pre_state(int from_pos, State s) {
         int pos = s.pos;
         if (has_pre_state(pos)) {
             State existing_state = get_pre_state(pos);
-            existing_state.add_from_pos(pos);
+            existing_state.add_from_pos(from_pos);
         } else {
             add_state(pre_opcode_frame_list, s);
         }
@@ -320,7 +320,7 @@ public class FrameVisitor implements OpcodeVisitor {
                 exception_state.frame.locals.set(i, t);
             }
 
-            add_pre_state(exception_state);
+            add_pre_state(start_pc, exception_state);
             restore_state(exception_state);
         }
 
@@ -341,7 +341,7 @@ public class FrameVisitor implements OpcodeVisitor {
                 Frame f = frame.getClone();
                 State s = new State(to_pos, f);
                 s.add_from_pos(ins.pos);
-                add_pre_state(s);
+                add_pre_state(ins.pos, s);
             }
 
             if (ins instanceof SelectInstruction) {
@@ -352,7 +352,7 @@ public class FrameVisitor implements OpcodeVisitor {
                     Frame f = frame.getClone();
                     State s = new State(to_pos, f);
                     s.add_from_pos(ins.pos);
-                    add_pre_state(s);
+                    add_pre_state(ins.pos, s);
                 }
             }
         }
@@ -1618,7 +1618,7 @@ public class FrameVisitor implements OpcodeVisitor {
     @Override
     public void visitNEWARRAY(final NEWARRAY obj) {
         byte atype = obj.atype;
-        Type type = TypeUtils.getType(atype);
+        Type type = new ArrayType(atype, 1);
         frame.stack.pop();
         frame.stack.push(type);
     }
