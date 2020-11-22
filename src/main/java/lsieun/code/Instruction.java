@@ -15,9 +15,6 @@ public abstract class Instruction {
     public Instruction next;
     public int pos;
 
-    public Instruction() {
-    }
-
     public Instruction(final int opcode, final int length) {
         this.opcode = opcode;
         this.length = length;
