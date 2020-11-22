@@ -25,7 +25,6 @@ import lsieun.utils.MethodUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: 处理Code中的exception table
 //[local variable][operand stack]
 public class FrameVisitor implements OpcodeVisitor {
     private final ConstantPool constant_pool;
@@ -141,7 +140,7 @@ public class FrameVisitor implements OpcodeVisitor {
     }
 
     private void add_state(List<State> list, State s) {
-        // FIXME: 我原来以来，它的有效性与local variable的有效区间有关系，可能我想的不对
+        // FIXME: 我原来以为，它的有效性与local variable的有效区间有关系，可能我想的不对
 //        int max_locals = s.frame.locals.max_locals();
 //        int pos = s.pos;
 //        for (int i = 0; i < max_locals; i++) {
@@ -261,48 +260,6 @@ public class FrameVisitor implements OpcodeVisitor {
         }
         return false;
     }
-
-//    public boolean has_state(int pos) {
-//        return state_map.containsKey(pos);
-//    }
-//
-//    public State get_state(int pos) {
-//        return state_map.get(pos);
-//    }
-//
-//    private void save_state(int from_pos, int offset) {
-//        int to_pos = from_pos + offset;
-//        State state = get_state(to_pos);
-//        if (state != null) {
-//            state.add_pos(from_pos);
-//        } else {
-//            Frame f = frame.getClone();
-//            state = new State(to_pos, f, from_pos);
-//            state_map.put(to_pos, state);
-//        }
-//    }
-//
-//    private void save_state(int to_pos, State state) {
-//        if (has_state(to_pos)) {
-//            get_state(to_pos).from_pos_list.addAll(state.from_pos_list);
-//        } else {
-//            state_map.put(to_pos, state);
-//        }
-//    }
-//
-//    private void restore_state(int pos) {
-//        State state = get_state(pos);
-//        int max_locals = frame.locals.max_locals();
-//        for (int i = 0; i < max_locals; i++) {
-//            Type t = state.frame.locals.get(i);
-//            frame.locals.set(i, t);
-//        }
-//        frame.stack.clear();
-//        for (Type item : state.frame.stack.stack) {
-//            frame.stack.push(item);
-//        }
-//    }
-
 
     public void visitInstruction(Instruction ins) {
         int pos = ins.pos;

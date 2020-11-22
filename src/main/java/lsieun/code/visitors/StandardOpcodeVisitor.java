@@ -1065,7 +1065,6 @@ public class StandardOpcodeVisitor implements OpcodeVisitor {
         throw new RuntimeException("Unsupported opcode: " + obj);
     }
 
-    //FIXME: 测试多维数组
     @Override
     public void visitMULTIANEWARRAY(final MULTIANEWARRAY obj) {
         String name = OpcodeConst.getOpcodeName(obj.opcode);

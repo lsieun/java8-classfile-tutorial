@@ -55,7 +55,6 @@ public abstract class ElementValue {
             case CLASS:
                 return new ClassElementValue(bd, cp);
             case ANNOTATION:
-                // FIXME:考虑注解是否在Runtime时可见，即isRuntimeVisible
                 return new AnnotationElementValue(bd, cp);
             case ARRAY:
                 return new ArrayElementValue(bd, cp);
