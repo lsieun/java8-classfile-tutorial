@@ -79,6 +79,23 @@ public class ByteUtils {
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
+    public static String toModifiedUtf8(byte[] bytes) {
+        int length = bytes.length;
+        char[] chars = new char[length];
+        int strLength = 0;
+        for (int i = 0; i < length; ) {
+            byte b = bytes[i++];
+            if ((b & 0x80) == 0) {
+                chars[strLength++] = (char) (b & 0x7F);
+            } else if ((b & 0xE0) == 0xC0) {
+                chars[strLength++] = (char) (((b & 0x1F) << 6) + (bytes[i++] & 0x3F));
+            } else {
+                chars[strLength++] = (char) (((b & 0xF) << 12) + ((bytes[i++] & 0x3F) << 6) + (bytes[i++] & 0x3F));
+            }
+        }
+        return new String(chars, 0, strLength);
+    }
+
     public static byte[] toBytes(int val) {
         return toBytes(val, Integer.BYTES);
     }

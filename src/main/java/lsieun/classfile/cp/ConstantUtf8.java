@@ -18,7 +18,7 @@ public final class ConstantUtf8 extends Constant {
         byte[] utf8_bytes = bd.nextN(length);
 
         this.length = length;
-        this.utf8Value = ByteUtils.toUtf8(utf8_bytes);
+        this.utf8Value = ByteUtils.toModifiedUtf8(utf8_bytes);
         super.value = utf8Value;
         super.bytes = ByteUtils.concatenate(tag_bytes, length_bytes, utf8_bytes);
     }
