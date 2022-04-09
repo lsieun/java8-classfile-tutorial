@@ -143,6 +143,16 @@ public class DefaultVisitor implements Visitor {
     public void visitConstantInvokeDynamic(ConstantInvokeDynamic obj) {
         visitConstant(obj);
     }
+
+    @Override
+    public void visitConstantModule(ConstantModule obj) {
+        visitConstant(obj);
+    }
+
+    @Override
+    public void visitConstantPackage(ConstantPackage obj) {
+        visitConstant(obj);
+    }
     // endregion
 
     // region Attributes
@@ -253,6 +263,11 @@ public class DefaultVisitor implements Visitor {
 
     @Override
     public void visitStackMapTable(StackMapTable obj) {
+        visitAttributeInfo(obj);
+    }
+
+    @Override
+    public void visitModule(Module obj) {
         visitAttributeInfo(obj);
     }
     // endregion

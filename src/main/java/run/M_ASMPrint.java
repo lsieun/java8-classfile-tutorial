@@ -1,8 +1,8 @@
 package run;
 
-import jdk.internal.org.objectweb.asm.ClassReader;
-import jdk.internal.org.objectweb.asm.util.ASMifier;
-import jdk.internal.org.objectweb.asm.util.TraceClassVisitor;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.util.ASMifier;
+import org.objectweb.asm.util.TraceClassVisitor;
 import lsieun.utils.FileUtils;
 import lsieun.utils.ReadUtils;
 

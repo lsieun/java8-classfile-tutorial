@@ -28,8 +28,6 @@ public class LocalVariable implements Comparable<LocalVariable> {
 
     @Override
     public int compareTo(LocalVariable another) {
-        int thisIndex = this.index;
-        int anotherIndex = another.index;
-        return (thisIndex - anotherIndex);
+        return (this.index - another.index);
     }
 }

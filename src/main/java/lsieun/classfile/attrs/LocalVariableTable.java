@@ -14,7 +14,7 @@ public final class LocalVariableTable extends AttributeInfo {
         this.local_variable_table_length = bd.readUnsignedShort();
         this.entries = new LocalVariable[local_variable_table_length];
 
-        for(int i = 0; i< local_variable_table_length; i++) {
+        for (int i = 0; i < local_variable_table_length; i++) {
             LocalVariable item = new LocalVariable(bd, cp);
             this.entries[i] = item;
         }

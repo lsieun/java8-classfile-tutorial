@@ -16,6 +16,8 @@ public class CPConst {
     public static final byte CONSTANT_MethodType         = 16;
     public static final byte CONSTANT_Dynamic            = 17;
     public static final byte CONSTANT_InvokeDynamic      = 18;
+    public static final byte CONSTANT_Module             = 19;
+    public static final byte CONSTANT_Package            = 20;
 
     /**
      * The names of the types of entries in a constant pool.

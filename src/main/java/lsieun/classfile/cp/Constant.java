@@ -50,6 +50,10 @@ public abstract class Constant extends Node {
                 return new ConstantDynamic(bd);
             case CPConst.CONSTANT_InvokeDynamic:
                 return new ConstantInvokeDynamic(bd);
+            case CPConst.CONSTANT_Module:
+                return new ConstantModule(bd);
+            case CPConst.CONSTANT_Package:
+                return new ConstantPackage(bd);
             default:
                 throw new RuntimeException("Invalid byte tag in constant pool: " + tag);
         }

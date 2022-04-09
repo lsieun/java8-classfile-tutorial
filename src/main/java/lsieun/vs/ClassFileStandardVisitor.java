@@ -80,7 +80,7 @@ public class ClassFileStandardVisitor extends DefaultVisitor {
         fm.format(format, "super_class", HexUtils.toHex(bd.nextN(2)), "#" + super_class);
         fm.format(format, "interfaces_count", HexUtils.toHex(bd.nextN(2)), interfaces_count);
         fm.format(format, "interfaces", HexUtils.toHex(bd.nextN(2 * interfaces_count)), array2str(interfaces));
-        System.out.print(sb.toString());
+        System.out.print(sb);
     }
 
     public static String array2str(int[] array) {
@@ -161,8 +161,8 @@ public class ClassFileStandardVisitor extends DefaultVisitor {
             byte[] name_index_bytes = bd.nextN(2);
             byte[] descriptor_index_bytes = bd.nextN(2);
             byte[] attributes_count_bytes = bd.nextN(2);
-            fm.format("access_flags='%s'(%s)%n", HexUtils.toHex(access_flags_bytes), item.getAccessFlagsString());
-            fm.format("name_index='%s'(#%s)%n", HexUtils.toHex(name_index_bytes), item.name_index);
+            fm.format("access_flags    ='%s'(%s)%n", HexUtils.toHex(access_flags_bytes), item.getAccessFlagsString());
+            fm.format("name_index      ='%s'(#%s)%n", HexUtils.toHex(name_index_bytes), item.name_index);
             fm.format("descriptor_index='%s'(#%s)%n", HexUtils.toHex(descriptor_index_bytes), item.descriptor_index);
             fm.format("attributes_count='%s'(%s)%n", HexUtils.toHex(attributes_count_bytes), item.attributes.attributes_count);
             for (int j = 0; j < item.attributes.attributes_count; j++) {
@@ -205,6 +205,6 @@ public class ClassFileStandardVisitor extends DefaultVisitor {
         fm.format(format, "attribute_name_index", HexUtils.toHex(bd.nextN(2)), "#" + attribute_name_index);
         fm.format(format, "attribute_length", HexUtils.toHex(bd.nextN(4)), attribute_length);
         fm.format("%s='%s'%n", "info", HexUtils.toHex(bd.nextN(attribute_length)));
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 }

@@ -1,9 +1,9 @@
 package run;
 
-import jdk.internal.org.objectweb.asm.*;
+import org.objectweb.asm.*;
 import lsieun.utils.FileUtils;
 
-import static jdk.internal.org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.*;
 
 public class M_ASMStackMapFrame {
     public static void main(String[] args) {

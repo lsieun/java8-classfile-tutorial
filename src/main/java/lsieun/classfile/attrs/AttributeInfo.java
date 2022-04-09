@@ -100,9 +100,12 @@ public class AttributeInfo extends Node {
         else if ("SourceDebugExtension".equals(name)) {
             instance = new SourceDebugExtension(bd, cp);
         }
+        else if ("Module".equals(name)) {
+            instance = new Module(bd, cp);
+        }
         else {
             throw new RuntimeException("Unknown Attribute Name: " + name);
-            //instance = new AttributeInfo(byteDashboard, constantPool, true);
+//            instance = new AttributeInfo(bd, cp);
         }
         return instance;
     }

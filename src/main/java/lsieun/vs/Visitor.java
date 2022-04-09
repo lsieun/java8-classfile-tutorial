@@ -62,6 +62,10 @@ public interface Visitor {
     void visitConstantDynamic(ConstantDynamic obj);
 
     void visitConstantInvokeDynamic(ConstantInvokeDynamic obj);
+
+    void visitConstantModule(ConstantModule obj);
+
+    void visitConstantPackage(ConstantPackage obj);
     // endregion
 
     // region attributes
@@ -108,5 +112,7 @@ public interface Visitor {
     void visitSourceFile(SourceFile obj);
 
     void visitStackMapTable(StackMapTable obj);
+
+    void visitModule(Module obj);
     // endregion
 }
