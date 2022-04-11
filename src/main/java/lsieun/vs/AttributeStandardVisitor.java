@@ -7,6 +7,7 @@ import lsieun.classfile.attrs.annotation.*;
 import lsieun.classfile.attrs.annotation.type.*;
 import lsieun.cst.AccessConst;
 import lsieun.cst.CPConst;
+import lsieun.cst.FormatConst;
 import lsieun.cst.StackMapConst;
 import lsieun.utils.ByteDashboard;
 import lsieun.utils.HexFormat;
@@ -71,15 +72,16 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         int count = obj.attributes_count;
         AttributeInfo[] entries = obj.entries;
 
-        String countLine = String.format("attributes_count='%s' (%d)", obj.hex(), count);
-        System.out.println(countLine);
+        String countLine = String.format(FormatConst.STANDARD_FORMAT, "attributes_count", obj.hex(), count);
+        System.out.print(countLine);
 
         System.out.println("attributes");
         for (int i = 0; i < count; i++) {
             AttributeInfo item = entries[i];
             String hexCode = item.hex();
             String attrName = constant_pool.getConstantString(item.attribute_name_index, CPConst.CONSTANT_Utf8);
-            System.out.println(String.format("--->|%03d| %s:", i, attrName));
+            String orderAndAttrNameLine = String.format("--->|%03d| %s:", i, attrName);
+            System.out.println(orderAndAttrNameLine);
             System.out.println("HexCode: " + hexCode);
             item.accept(this);
         }
@@ -112,12 +114,11 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         ByteDashboard bd = new ByteDashboard(bytes);
         visitAttributeCommon(obj, bd);
 
-        String format = "%s='%s' (%s)%n";
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
 
         int num_bootstrap_methods = obj.num_bootstrap_methods;
-        fm.format(prefix + format, "num_bootstrap_methods", HexUtils.toHex(bd.nextN(2)), num_bootstrap_methods);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "num_bootstrap_methods", HexUtils.toHex(bd.nextN(2)), num_bootstrap_methods);
 
         if (num_bootstrap_methods > 0) {
             for (int i = 0; i < obj.num_bootstrap_methods; i++) {
@@ -129,9 +130,9 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                 fm.format(prefix + "bootstrap_methods[%d] {%n", i);
                 {
                     right_shift();
-                    fm.format(prefix + format, "bootstrap_method_ref", HexUtils.toHex(bd.nextN(2)), "#" + bootstrap_method_ref);
-                    fm.format(prefix + format, "num_bootstrap_arguments", HexUtils.toHex(bd.nextN(2)), num_bootstrap_arguments);
-                    fm.format(prefix + format, "bootstrap_arguments", HexUtils.toHex(bd.nextN(2 * num_bootstrap_arguments)), bootstrap_arguments_str);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "bootstrap_method_ref", HexUtils.toHex(bd.nextN(2)), "#" + bootstrap_method_ref);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "num_bootstrap_arguments", HexUtils.toHex(bd.nextN(2)), num_bootstrap_arguments);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "bootstrap_arguments", HexUtils.toHex(bd.nextN(2 * num_bootstrap_arguments)), bootstrap_arguments_str);
                     left_shift();
                 }
                 fm.format(prefix + "}%n");
@@ -163,15 +164,14 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         visitAttributeCommon(obj, bd);
 
 
-        String format = "%s='%s' (%s)%n";
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
-        fm.format(format, "max_stack", HexUtils.toHex(bd.nextN(2)), obj.max_stack);
-        fm.format(format, "max_locals", HexUtils.toHex(bd.nextN(2)), obj.max_locals);
-        fm.format(format, "code_length", HexUtils.toHex(bd.nextN(4)), obj.code_length);
+        fm.format(FormatConst.STANDARD_FORMAT, "max_stack", HexUtils.toHex(bd.nextN(2)), obj.max_stack);
+        fm.format(FormatConst.STANDARD_FORMAT, "max_locals", HexUtils.toHex(bd.nextN(2)), obj.max_locals);
+        fm.format(FormatConst.STANDARD_FORMAT, "code_length", HexUtils.toHex(bd.nextN(4)), obj.code_length);
         byte[] code_bytes = bd.nextN(obj.code_length);
         fm.format("code: %s%n", HexUtils.format(code_bytes, HexFormat.FORMAT_FF_FF_32));
-        fm.format(format, "exception_table_length", HexUtils.toHex(bd.nextN(2)), obj.exception_table_length);
+        fm.format(FormatConst.STANDARD_FORMAT, "exception_table_length", HexUtils.toHex(bd.nextN(2)), obj.exception_table_length);
         for (int i = 0; i < obj.exception_table_length; i++) {
             ExceptionTable exception_table = obj.exception_table_array[i];
             byte[] start_pc_bytes = bd.nextN(2);
@@ -182,15 +182,15 @@ public class AttributeStandardVisitor extends DefaultVisitor {
             fm.format(prefix + "exception_table[%d] {%n", i);
             {
                 right_shift();
-                fm.format(prefix + format, "start_pc", HexUtils.toHex(start_pc_bytes), exception_table.start_pc);
-                fm.format(prefix + format, "end_pc", HexUtils.toHex(end_pc_bytes), exception_table.end_pc);
-                fm.format(prefix + format, "handler_pc", HexUtils.toHex(handler_pc_bytes), exception_table.handler_pc);
-                fm.format(prefix + format, "catch_type", HexUtils.toHex(catch_type_bytes), "#" + exception_table.catch_type);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "start_pc", HexUtils.toHex(start_pc_bytes), exception_table.start_pc);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "end_pc", HexUtils.toHex(end_pc_bytes), exception_table.end_pc);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "handler_pc", HexUtils.toHex(handler_pc_bytes), exception_table.handler_pc);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "catch_type", HexUtils.toHex(catch_type_bytes), "#" + exception_table.catch_type);
                 left_shift();
             }
             fm.format(prefix + "}%n");
         }
-        fm.format(format, "attributes_count", HexUtils.toHex(bd.nextN(2)), obj.attributes.attributes_count);
+        fm.format(FormatConst.STANDARD_FORMAT, "attributes_count", HexUtils.toHex(bd.nextN(2)), obj.attributes.attributes_count);
         for (int i = 0; i < obj.attributes.attributes_count; i++) {
             AttributeInfo entry = obj.attributes.entries[i];
             right_shift();
@@ -207,9 +207,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         ByteDashboard bd = new ByteDashboard(bytes);
         visitAttributeCommon(obj, bd);
 
-        String format = "%s='%s' (%s)";
-        String line = String.format(format, "constantvalue_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.constantvalue_index);
-        System.out.println(line);
+        String line = String.format(FormatConst.STANDARD_FORMAT, "constantvalue_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.constantvalue_index);
+        System.out.print(line);
     }
 
     @Override
@@ -218,16 +217,11 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         ByteDashboard bd = new ByteDashboard(bytes);
         visitAttributeCommon(obj, bd);
 
-        String format = "%s='%s' (%s)%n";
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
-        fm.format(prefix + format, "class_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.class_index);
-        String method_name = "";
-        if (obj.method_index != 0) {
-            method_name = constant_pool.getConstant(obj.method_index).value;
-        }
-        fm.format(format, "method_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.method_index);
-        System.out.print(sb);
+        fm.format(FormatConst.STANDARD_FORMAT, "class_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.class_index);
+        fm.format(FormatConst.STANDARD_FORMAT, "method_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.method_index);
+        System.out.println(sb);
     }
 
     @Override
@@ -237,15 +231,14 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         visitAttributeCommon(obj, bd);
 
         int number_of_exceptions = obj.number_of_exceptions;
-        String format = "%s='%s' (%s)%n";
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
-        fm.format(prefix + format, "number_of_exceptions", HexUtils.toHex(bd.nextN(2)), number_of_exceptions);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "number_of_exceptions", HexUtils.toHex(bd.nextN(2)), number_of_exceptions);
         if (number_of_exceptions > 0) {
             fm.format(prefix + "exception_index_table {%n");
             right_shift();
             for (int i = 0; i < number_of_exceptions; i++) {
-                fm.format(prefix + format, "exception_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.exception_index_array[i]);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "exception_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.exception_index_array[i]);
             }
             left_shift();
             fm.format(prefix + "}%n");
@@ -262,9 +255,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
 
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
-        String format = "%s='%s' (%s)%n";
         int number_of_classes = obj.number_of_classes;
-        fm.format(prefix + format, "number_of_classes", HexUtils.toHex(bd.nextN(2)), number_of_classes);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "number_of_classes", HexUtils.toHex(bd.nextN(2)), number_of_classes);
 
         if (number_of_classes > 0) {
             for (int i = 0; i < obj.number_of_classes; i++) {
@@ -272,17 +264,17 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                 fm.format(prefix + "classes[%d] {%n", i);
                 {
                     right_shift();
-                    fm.format(prefix + format, "inner_class_info_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.inner_class_info_index);
-                    fm.format(prefix + format, "outer_class_info_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.outer_class_info_index);
-                    fm.format(prefix + format, "inner_name_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.inner_name_index);
-                    fm.format(prefix + format, "inner_class_access_flags", HexUtils.toHex(bd.nextN(2)), AccessConst.getInnerClassAccessFlagsString(entry.inner_class_access_flags));
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "inner_class_info_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.inner_class_info_index);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "outer_class_info_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.outer_class_info_index);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "inner_name_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.inner_name_index);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "inner_class_access_flags", HexUtils.toHex(bd.nextN(2)), AccessConst.getInnerClassAccessFlagsString(entry.inner_class_access_flags));
                     left_shift();
                 }
                 fm.format(prefix + "}%n");
             }
         }
 
-        System.out.print(sb);
+        System.out.println(sb);
     }
 
     @Override
@@ -293,9 +285,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
 
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
-        String format = "%s='%s' (%s)%n";
         int line_number_table_length = obj.line_number_table_length;
-        fm.format(prefix + format, "line_number_table_length", HexUtils.toHex(bd.nextN(2)), line_number_table_length);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "line_number_table_length", HexUtils.toHex(bd.nextN(2)), line_number_table_length);
 
         if (line_number_table_length > 0) {
             for (int i = 0; i < line_number_table_length; i++) {
@@ -303,8 +294,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                 fm.format(prefix + "line_number_table[%d] {%n", i);
                 {
                     right_shift();
-                    fm.format(prefix + format, "start_pc", HexUtils.toHex(bd.nextN(2)), entry.start_pc);
-                    fm.format(prefix + format, "line_number", HexUtils.toHex(bd.nextN(2)), entry.line_number);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "start_pc", HexUtils.toHex(bd.nextN(2)), entry.start_pc);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "line_number", HexUtils.toHex(bd.nextN(2)), entry.line_number);
                     left_shift();
                 }
                 fm.format(prefix + "}%n");
@@ -322,9 +313,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
 
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
-        String format = "%s='%s' (%s)%n";
         int local_variable_table_length = obj.local_variable_table_length;
-        fm.format(prefix + format, "local_variable_table_length", HexUtils.toHex(bd.nextN(2)), local_variable_table_length);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "local_variable_table_length", HexUtils.toHex(bd.nextN(2)), local_variable_table_length);
 
         if (local_variable_table_length > 0) {
             for (int i = 0; i < local_variable_table_length; i++) {
@@ -332,11 +322,11 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                 fm.format(prefix + "local_variable_table[%d] {%n", i);
                 {
                     right_shift();
-                    fm.format(prefix + format, "start_pc", HexUtils.toHex(bd.nextN(2)), entry.start_pc);
-                    fm.format(prefix + format, "length", HexUtils.toHex(bd.nextN(2)), entry.length);
-                    fm.format(prefix + format, "name_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.name_index);
-                    fm.format(prefix + format, "descriptor_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.descriptor_index);
-                    fm.format(prefix + format, "index", HexUtils.toHex(bd.nextN(2)), entry.index);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "start_pc", HexUtils.toHex(bd.nextN(2)), entry.start_pc);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "length", HexUtils.toHex(bd.nextN(2)), entry.length);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "name_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.name_index);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "descriptor_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.descriptor_index);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "index", HexUtils.toHex(bd.nextN(2)), entry.index);
                     left_shift();
                 }
                 fm.format(prefix + "}%n");
@@ -354,9 +344,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
 
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
-        String format = "%s='%s' (%s)%n";
         int local_variable_type_table_length = obj.local_variable_type_table_length;
-        fm.format(prefix + format, "local_variable_type_table_length", HexUtils.toHex(bd.nextN(2)), local_variable_type_table_length);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "local_variable_type_table_length", HexUtils.toHex(bd.nextN(2)), local_variable_type_table_length);
 
         if (local_variable_type_table_length > 0) {
             for (int i = 0; i < local_variable_type_table_length; i++) {
@@ -364,11 +353,11 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                 fm.format(prefix + "local_variable_type_table[%d] {%n", i);
                 {
                     right_shift();
-                    fm.format(prefix + format, "start_pc", HexUtils.toHex(bd.nextN(2)), entry.start_pc);
-                    fm.format(prefix + format, "length", HexUtils.toHex(bd.nextN(2)), entry.length);
-                    fm.format(prefix + format, "name_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.name_index);
-                    fm.format(prefix + format, "signature_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.signature_index);
-                    fm.format(prefix + format, "index", HexUtils.toHex(bd.nextN(2)), entry.index);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "start_pc", HexUtils.toHex(bd.nextN(2)), entry.start_pc);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "length", HexUtils.toHex(bd.nextN(2)), entry.length);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "name_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.name_index);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "signature_index", HexUtils.toHex(bd.nextN(2)), "#" + entry.signature_index);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "index", HexUtils.toHex(bd.nextN(2)), entry.index);
                     left_shift();
                 }
                 fm.format(prefix + "}%n");
@@ -404,8 +393,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
 
-        String format = "%s='%s' (%s)%n";
-        fm.format(prefix + format, "num_annotations", HexUtils.toHex(bd.nextN(2)), num_annotations);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "num_annotations", HexUtils.toHex(bd.nextN(2)), num_annotations);
         display_annotations(annotations, bd, fm);
         System.out.println(sb);
     }
@@ -427,9 +415,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
     }
 
     private void display_one_annotation(AnnotationEntry annotationEntry, ByteDashboard bd, Formatter fm) {
-        String format = "%s='%s' (%s)%n";
-        fm.format(prefix + format, "type_index", HexUtils.toHex(bd.nextN(2)), "#" + annotationEntry.type_index);
-        fm.format(prefix + format, "num_element_value_pairs", HexUtils.toHex(bd.nextN(2)), annotationEntry.num_element_value_pairs);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "type_index", HexUtils.toHex(bd.nextN(2)), "#" + annotationEntry.type_index);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "num_element_value_pairs", HexUtils.toHex(bd.nextN(2)), annotationEntry.num_element_value_pairs);
 
         ElementValuePair[] element_value_pairs = annotationEntry.element_value_pair_list;
         if (annotationEntry.num_element_value_pairs > 0) {
@@ -463,8 +450,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
 
-        String format = "%s='%s' (%s)%n";
-        fm.format(prefix + format, "num_parameters", HexUtils.toHex(bd.nextN(1)), num_parameters);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "num_parameters", HexUtils.toHex(bd.nextN(1)), num_parameters);
         if (num_parameters > 0) {
             for (int i = 0; i < num_parameters; i++) {
                 ParameterAnnotation parameter_annotation = parameter_annotations[i];
@@ -474,7 +460,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                     int num_annotations = parameter_annotation.num_annotations;
                     AnnotationEntry[] annotations = parameter_annotation.annotations;
 
-                    fm.format(prefix + format, "num_annotations", HexUtils.toHex(bd.nextN(2)), num_annotations);
+                    fm.format(prefix + FormatConst.STANDARD_FORMAT, "num_annotations", HexUtils.toHex(bd.nextN(2)), num_annotations);
                     display_annotations(annotations, bd, fm);
                     left_shift();
                 }
@@ -510,8 +496,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
 
-        String format = "%s='%s' (%s)%n";
-        fm.format(format, "num_annotations", HexUtils.toHex(bd.nextN(2)), num_annotations);
+        fm.format(FormatConst.STANDARD_FORMAT, "num_annotations", HexUtils.toHex(bd.nextN(2)), num_annotations);
         if (num_annotations > 0) {
             displayTypeAnnotations(annotations, bd, fm);
         }
@@ -521,7 +506,6 @@ public class AttributeStandardVisitor extends DefaultVisitor {
 
     public void displayTypeAnnotations(TypeAnnotation[] annotations, ByteDashboard bd, Formatter fm) {
         int length = annotations.length;
-        String format = "%s='%s' (%s)%n";
 
         for (int i = 0; i < length; i++) {
             TypeAnnotation annotation = annotations[i];
@@ -529,7 +513,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
             fm.format(prefix + "annotations[%d] {%n", i);
             right_shift();
 
-            fm.format(prefix + format, "target_type", HexUtils.toHex(bd.nextN(1)), target_type);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "target_type", HexUtils.toHex(bd.nextN(1)), target_type);
 
             fm.format(prefix + "target_info {%n");
             {
@@ -540,7 +524,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         TypeParameterTarget type_parameter_target = annotation.target_info.type_parameter_target;
                         fm.format(prefix + "type_parameter_target {%n");
                         right_shift();
-                        fm.format(prefix + format, "type_parameter_index", HexUtils.toHex(bd.nextN(1)), "#" + type_parameter_target.type_parameter_index);
+                        assert type_parameter_target != null;
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "type_parameter_index", HexUtils.toHex(bd.nextN(1)), "#" + type_parameter_target.type_parameter_index);
                         left_shift();
                         fm.format(prefix + "}%n");
                         break;
@@ -548,7 +533,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         SuperTypeTarget supertype_target = annotation.target_info.supertype_target;
                         fm.format(prefix + "supertype_target {%n");
                         right_shift();
-                        fm.format(prefix + format, "supertype_index", HexUtils.toHex(bd.nextN(2)), "#" + supertype_target.supertype_index);
+                        assert supertype_target != null;
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "supertype_index", HexUtils.toHex(bd.nextN(2)), "#" + supertype_target.supertype_index);
                         left_shift();
                         fm.format(prefix + "}%n");
                         break;
@@ -557,8 +543,9 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         TypeParameterBoundTarget type_parameter_bound_target = annotation.target_info.type_parameter_bound_target;
                         fm.format(prefix + "type_parameter_bound_target {%n");
                         right_shift();
-                        fm.format(prefix + format, "type_parameter_index", HexUtils.toHex(bd.nextN(1)), "#" + type_parameter_bound_target.type_parameter_index);
-                        fm.format(prefix + format, "bound_index", HexUtils.toHex(bd.nextN(1)), "#" + type_parameter_bound_target.bound_index);
+                        assert type_parameter_bound_target != null;
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "type_parameter_index", HexUtils.toHex(bd.nextN(1)), "#" + type_parameter_bound_target.type_parameter_index);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "bound_index", HexUtils.toHex(bd.nextN(1)), "#" + type_parameter_bound_target.bound_index);
                         left_shift();
                         fm.format(prefix + "}%n");
                         break;
@@ -573,7 +560,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         FormalParameterTarget method_formal_parameter_target = annotation.target_info.method_formal_parameter_target;
                         fm.format(prefix + "formal_parameter_target {%n");
                         right_shift();
-                        fm.format(prefix + format, "formal_parameter_index", HexUtils.toHex(bd.nextN(1)), "#" + method_formal_parameter_target.formal_parameter_index);
+                        assert method_formal_parameter_target != null;
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "formal_parameter_index", HexUtils.toHex(bd.nextN(1)), "#" + method_formal_parameter_target.formal_parameter_index);
                         left_shift();
                         fm.format(prefix + "}%n");
                         break;
@@ -581,7 +569,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         ThrowsTarget throws_target = annotation.target_info.throws_target;
                         fm.format(prefix + "throws_target {%n");
                         right_shift();
-                        fm.format(prefix + format, "throws_type_index", HexUtils.toHex(bd.nextN(2)), "#" + throws_target.throws_type_index);
+                        assert throws_target != null;
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "throws_type_index", HexUtils.toHex(bd.nextN(2)), "#" + throws_target.throws_type_index);
                         left_shift();
                         fm.format(prefix + "}%n");
                         break;
@@ -590,16 +579,17 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         LocalVarTarget localvar_target = annotation.target_info.localvar_target;
                         fm.format(prefix + "localvar_target {%n");
                         right_shift();
+                        assert localvar_target != null;
                         int table_length = localvar_target.table_length;
-                        fm.format(prefix + format, "table_length", HexUtils.toHex(bd.nextN(2)), table_length);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "table_length", HexUtils.toHex(bd.nextN(2)), table_length);
                         if (table_length > 0) {
                             for (int j = 0; j < table_length; j++) {
                                 Table table = localvar_target.tables[i];
                                 fm.format(prefix + "table[%d] {%n", j);
                                 right_shift();
-                                fm.format(prefix + format, "start_pc", HexUtils.toHex(bd.nextN(2)), table.start_pc);
-                                fm.format(prefix + format, "length", HexUtils.toHex(bd.nextN(2)), table.length);
-                                fm.format(prefix + format, "index", HexUtils.toHex(bd.nextN(2)), table.index);
+                                fm.format(prefix + FormatConst.STANDARD_FORMAT, "start_pc", HexUtils.toHex(bd.nextN(2)), table.start_pc);
+                                fm.format(prefix + FormatConst.STANDARD_FORMAT, "length", HexUtils.toHex(bd.nextN(2)), table.length);
+                                fm.format(prefix + FormatConst.STANDARD_FORMAT, "index", HexUtils.toHex(bd.nextN(2)), table.index);
                                 left_shift();
                                 fm.format(prefix + "}%n");
                             }
@@ -611,7 +601,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         CatchTarget catch_target = annotation.target_info.catch_target;
                         fm.format(prefix + "catch_target {%n");
                         right_shift();
-                        fm.format(prefix + format, "exception_table_index", HexUtils.toHex(bd.nextN(2)), "#" + catch_target.exception_table_index);
+                        assert catch_target != null;
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "exception_table_index", HexUtils.toHex(bd.nextN(2)), "#" + catch_target.exception_table_index);
                         left_shift();
                         fm.format(prefix + "}%n");
                         break;
@@ -622,7 +613,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         OffsetTarget offset_target = annotation.target_info.offset_target;
                         fm.format(prefix + "offset_target {%n");
                         right_shift();
-                        fm.format(prefix + format, "offset", HexUtils.toHex(bd.nextN(2)), offset_target.offset);
+                        assert offset_target != null;
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "offset", HexUtils.toHex(bd.nextN(2)), offset_target.offset);
                         left_shift();
                         fm.format(prefix + "}%n");
                         break;
@@ -630,8 +622,9 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         TypeArgumentTarget type_argument_target = annotation.target_info.type_argument_target;
                         fm.format(prefix + "type_argument_target {%n");
                         right_shift();
-                        fm.format(prefix + format, "offset", HexUtils.toHex(bd.nextN(2)), type_argument_target.offset);
-                        fm.format(prefix + format, "type_argument_index", HexUtils.toHex(bd.nextN(1)), type_argument_target.type_argument_index);
+                        assert type_argument_target != null;
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "offset", HexUtils.toHex(bd.nextN(2)), type_argument_target.offset);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "type_argument_index", HexUtils.toHex(bd.nextN(1)), type_argument_target.type_argument_index);
                         left_shift();
                         fm.format(prefix + "}%n");
                         break;
@@ -646,14 +639,14 @@ public class AttributeStandardVisitor extends DefaultVisitor {
             {
                 right_shift();
                 int path_length = annotation.target_path.path_length;
-                fm.format(prefix + format, "path_length", HexUtils.toHex(bd.nextN(1)), path_length);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "path_length", HexUtils.toHex(bd.nextN(1)), path_length);
                 if (path_length > 0) {
                     for (int j = 0; j < path_length; j++) {
                         Path path = annotation.target_path.pathes[j];
                         fm.format(prefix + "path[%d] {%n", j);
                         right_shift();
-                        fm.format(prefix + format, "type_path_kind", HexUtils.toHex(bd.nextN(1)), path.type_path_kind);
-                        fm.format(prefix + format, "type_argument_index", HexUtils.toHex(bd.nextN(1)), path.type_argument_index);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "type_path_kind", HexUtils.toHex(bd.nextN(1)), path.type_path_kind);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "type_argument_index", HexUtils.toHex(bd.nextN(1)), path.type_argument_index);
                         left_shift();
                         fm.format(prefix + "}%n");
                     }
@@ -662,10 +655,10 @@ public class AttributeStandardVisitor extends DefaultVisitor {
             }
             fm.format(prefix + "}%n");
 
-            fm.format(prefix + format, "type_index", HexUtils.toHex(bd.nextN(2)), "#" + annotation.type_index);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "type_index", HexUtils.toHex(bd.nextN(2)), "#" + annotation.type_index);
 
             int num_element_value_pairs = annotation.num_element_value_pairs;
-            fm.format(prefix + format, "num_element_value_pairs", HexUtils.toHex(bd.nextN(2)), num_element_value_pairs);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "num_element_value_pairs", HexUtils.toHex(bd.nextN(2)), num_element_value_pairs);
 
             if (num_element_value_pairs > 0) {
                 display_element_value_pairs(annotation.element_value_pairs, bd, fm);
@@ -681,8 +674,6 @@ public class AttributeStandardVisitor extends DefaultVisitor {
     private void display_element_value_pairs(ElementValuePair[] element_value_pairs, ByteDashboard bd, Formatter fm) {
         int length = element_value_pairs.length;
         if (length > 0) {
-            String format = "%s='%s' (%s)%n";
-
             for (int i = 0; i < length; i++) {
                 ElementValuePair element_value_pair = element_value_pairs[i];
                 int element_name_index = element_value_pair.element_name_index;
@@ -690,7 +681,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
 
                 fm.format(prefix + "element_value_pairs[%d] {%n", i);
                 right_shift();
-                fm.format(prefix + format, "element_name_index", HexUtils.toHex(bd.nextN(2)), "#" + element_name_index);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "element_name_index", HexUtils.toHex(bd.nextN(2)), "#" + element_name_index);
                 display_element_value_pair(element_value, bd, fm);
                 left_shift();
                 fm.format(prefix + "}%n");
@@ -699,34 +690,33 @@ public class AttributeStandardVisitor extends DefaultVisitor {
     }
 
     private void display_element_value_pair(ElementValue element_value, ByteDashboard bd, Formatter fm) {
-        String format = "%s='%s' (%s)%n";
         fm.format(prefix + "element_value {%n");
         right_shift();
 
-        fm.format(prefix + format, "tag", HexUtils.toHex(bd.nextN(1)), (char) element_value.type);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "tag", HexUtils.toHex(bd.nextN(1)), (char) element_value.type);
         if (element_value instanceof SimpleElementValue) {
             SimpleElementValue simpleElementValue = (SimpleElementValue) element_value;
             String value = "#" + simpleElementValue.const_value_index + ": " + simpleElementValue.stringifyValue();
-            fm.format(prefix + format, "const_value_index", HexUtils.toHex(bd.nextN(2)), value);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "const_value_index", HexUtils.toHex(bd.nextN(2)), value);
         }
         else if (element_value instanceof EnumElementValue) {
             EnumElementValue enumElementValue = (EnumElementValue) element_value;
-            fm.format(prefix + format, "type_name_index", HexUtils.toHex(bd.nextN(2)), "#" + enumElementValue.type_name_index);
-            fm.format(prefix + format, "const_name_index", HexUtils.toHex(bd.nextN(2)), "#" + enumElementValue.const_name_index);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "type_name_index", HexUtils.toHex(bd.nextN(2)), "#" + enumElementValue.type_name_index);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "const_name_index", HexUtils.toHex(bd.nextN(2)), "#" + enumElementValue.const_name_index);
         }
         else if (element_value instanceof ClassElementValue) {
             ClassElementValue classElementValue = (ClassElementValue) element_value;
-            fm.format(prefix + format, "class_info_index", HexUtils.toHex(bd.nextN(2)), "#" + classElementValue.class_info_index);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "class_info_index", HexUtils.toHex(bd.nextN(2)), "#" + classElementValue.class_info_index);
         }
         else if (element_value instanceof AnnotationElementValue) {
             AnnotationElementValue annotation_element_value = (AnnotationElementValue) element_value;
-            fm.format(prefix + format, "type_index", HexUtils.toHex(bd.nextN(2)), "#" + annotation_element_value.annotation_entry.type_index);
-            fm.format(prefix + format, "num_element_value_pairs", HexUtils.toHex(bd.nextN(2)), annotation_element_value.annotation_entry.num_element_value_pairs);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "type_index", HexUtils.toHex(bd.nextN(2)), "#" + annotation_element_value.annotation_entry.type_index);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "num_element_value_pairs", HexUtils.toHex(bd.nextN(2)), annotation_element_value.annotation_entry.num_element_value_pairs);
             display_element_value_pairs(annotation_element_value.annotation_entry.element_value_pair_list, bd, fm);
         }
         else if (element_value instanceof ArrayElementValue) {
             ArrayElementValue arrayElementValue = (ArrayElementValue) element_value;
-            fm.format(prefix + format, "num_values", HexUtils.toHex(bd.nextN(2)), arrayElementValue.num_values);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "num_values", HexUtils.toHex(bd.nextN(2)), arrayElementValue.num_values);
             for (int i = 0; i < arrayElementValue.num_values; i++) {
                 display_element_value_pair(arrayElementValue.entries[i], bd, fm);
             }
@@ -742,8 +732,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         ByteDashboard bd = new ByteDashboard(bytes);
         visitAttributeCommon(obj, bd);
 
-        String format = "%s='%s' (%s)";
-        System.out.println(String.format(format, "signature_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.signature_index));
+        String message = String.format(FormatConst.STANDARD_FORMAT, "signature_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.signature_index);
+        System.out.println(message);
 
     }
 
@@ -754,7 +744,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         visitAttributeCommon(obj, bd);
 
         String format = "%s=%n%s";
-        System.out.println(String.format(format, "debug_extension", HexUtils.format(obj.debug_extension, HexFormat.FORMAT_FF_SPACE_FF_32)));
+        String message = String.format(format, "debug_extension", HexUtils.format(obj.debug_extension, HexFormat.FORMAT_FF_SPACE_FF_32));
+        System.out.println(message);
     }
 
     @Override
@@ -764,8 +755,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         visitAttributeCommon(obj, bd);
 
         String value = "#" + obj.sourcefile_index;
-        String format = "%s='%s' (%s)";
-        String line = String.format(format, "sourcefile_index", HexUtils.toHex(bd.nextN(2)), value);
+        String line = String.format(FormatConst.STANDARD_FORMAT, "sourcefile_index", HexUtils.toHex(bd.nextN(2)), value);
         System.out.println(line);
     }
 
@@ -775,12 +765,11 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         ByteDashboard bd = new ByteDashboard(bytes);
         visitAttributeCommon(obj, bd);
 
-        String format = "%s='%s' (%s)%n";
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
 
         int number_of_entries = obj.number_of_entries;
-        fm.format(prefix + format, "number_of_entries", HexUtils.toHex(bd.nextN(2)), number_of_entries);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "number_of_entries", HexUtils.toHex(bd.nextN(2)), number_of_entries);
         if (number_of_entries > 0) {
             int code_index = -1;
             for (int i = 0; i < number_of_entries; i++) {
@@ -797,7 +786,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         fm.format(prefix + "same_frame {%n");
                         {
                             right_shift();
-                            fm.format(prefix + format, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
                             left_shift();
                         }
                         fm.format(prefix + "}%n");
@@ -807,7 +796,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         fm.format(prefix + "same_locals_1_stack_item_frame {%n");
                         {
                             right_shift();
-                            fm.format(prefix + format, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
                             display_verification_type_info("stack", types_of_stack_items, bd, fm);
                             left_shift();
                         }
@@ -817,8 +806,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         fm.format(prefix + "same_locals_1_stack_item_frame_extended {%n");
                         {
                             right_shift();
-                            fm.format(prefix + format, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
-                            fm.format(prefix + format, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
                             display_verification_type_info("stack", types_of_stack_items, bd, fm);
                             left_shift();
                         }
@@ -828,8 +817,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         fm.format(prefix + "chop_frame {%n");
                         {
                             right_shift();
-                            fm.format(prefix + format, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
-                            fm.format(prefix + format, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
                             left_shift();
                         }
                         fm.format(prefix + "}%n");
@@ -838,8 +827,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         fm.format(prefix + "same_frame_extended {%n");
                         {
                             right_shift();
-                            fm.format(prefix + format, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
-                            fm.format(prefix + format, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
                             left_shift();
                         }
                         fm.format(prefix + "}%n");
@@ -848,8 +837,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         fm.format(prefix + "append_frame {%n");
                         {
                             right_shift();
-                            fm.format(prefix + format, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
-                            fm.format(prefix + format, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
                             display_verification_type_info("local", types_of_locals, bd, fm);
                             left_shift();
                         }
@@ -859,11 +848,11 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                         fm.format(prefix + "full_frame {%n");
                         {
                             right_shift();
-                            fm.format(prefix + format, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
-                            fm.format(prefix + format, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
-                            fm.format(prefix + format, "number_of_locals", HexUtils.toHex(bd.nextN(2)), types_of_locals.length);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "frame_type", HexUtils.toHex(bd.nextN(1)), frame_type);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "offset_delta", HexUtils.toHex(bd.nextN(2)), byte_code_offset);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "number_of_locals", HexUtils.toHex(bd.nextN(2)), types_of_locals.length);
                             display_verification_type_info("local", types_of_locals, bd, fm);
-                            fm.format(prefix + format, "number_of_stack_items", HexUtils.toHex(bd.nextN(2)), types_of_stack_items.length);
+                            fm.format(prefix + FormatConst.STANDARD_FORMAT, "number_of_stack_items", HexUtils.toHex(bd.nextN(2)), types_of_stack_items.length);
                             display_verification_type_info("stack", types_of_stack_items, bd, fm);
                             left_shift();
                         }
@@ -894,7 +883,6 @@ public class AttributeStandardVisitor extends DefaultVisitor {
 
     private void display_verification_type_info(String label, int index, StackMapType stack_map_type, ByteDashboard bd, Formatter fm) {
         byte tag = stack_map_type.tag;
-        String format = "%s='%s' (%s)%n";
         String rawName = StackMapConst.getItemRawName(tag);
         fm.format(prefix + "%s[%d] {%n", label, index);
         {
@@ -910,7 +898,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                     fm.format(prefix + "%s {%n", rawName);
                     {
                         right_shift();
-                        fm.format(prefix + format, "tag", HexUtils.toHex(bd.nextN(1)), tag);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "tag", HexUtils.toHex(bd.nextN(1)), tag);
                         left_shift();
                     }
                     fm.format(prefix + "}%n");
@@ -920,8 +908,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                     fm.format(prefix + "%s {%n", rawName);
                     {
                         right_shift();
-                        fm.format(prefix + format, "tag", HexUtils.toHex(bd.nextN(1)), tag);
-                        fm.format(prefix + format, "cpool_index", HexUtils.toHex(bd.nextN(2)), "#" + stack_map_type.index);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "tag", HexUtils.toHex(bd.nextN(1)), tag);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "cpool_index", HexUtils.toHex(bd.nextN(2)), "#" + stack_map_type.index);
                         left_shift();
                     }
                     fm.format(prefix + "}%n");
@@ -932,8 +920,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                     fm.format(prefix + "%s {%n", rawName);
                     {
                         right_shift();
-                        fm.format(prefix + format, "tag", HexUtils.toHex(bd.nextN(1)), tag);
-                        fm.format(prefix + format, "offset", HexUtils.toHex(bd.nextN(2)), stack_map_type.index);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "tag", HexUtils.toHex(bd.nextN(1)), tag);
+                        fm.format(prefix + FormatConst.STANDARD_FORMAT, "offset", HexUtils.toHex(bd.nextN(2)), stack_map_type.index);
                         left_shift();
                     }
                     fm.format(prefix + "}%n");
@@ -954,10 +942,9 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         int parameters_count = obj.parameters_count;
         MethodParameter[] parameters = obj.parameters;
 
-        String format = "%s='%s' (%s)%n";
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
-        fm.format(prefix + format, "parameters_count", HexUtils.toHex(bd.nextN(1)), parameters_count);
+        fm.format(prefix + FormatConst.STANDARD_FORMAT, "parameters_count", HexUtils.toHex(bd.nextN(1)), parameters_count);
 
         for (int i = 0; i < parameters_count; i++) {
             MethodParameter param = parameters[i];
@@ -986,8 +973,8 @@ public class AttributeStandardVisitor extends DefaultVisitor {
             fm.format(prefix + "parameters[%d] {%n", i);
             {
                 right_shift();
-                fm.format(prefix + format, "name_index", HexUtils.toHex(bd.nextN(2)), name_value);
-                fm.format(prefix + format, "access_flags", HexUtils.toHex(bd.nextN(2)), access_flags_str);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "name_index", HexUtils.toHex(bd.nextN(2)), name_value);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "access_flags", HexUtils.toHex(bd.nextN(2)), access_flags_str);
                 left_shift();
             }
             fm.format(prefix + "}%n");
@@ -1001,70 +988,69 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         ByteDashboard bd = new ByteDashboard(bytes);
         visitAttributeCommon(obj, bd);
 
-        String format = "%-25s='%s' (%s)%n";
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
-        fm.format(format, "module_name_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.module_name_index);
+        fm.format(FormatConst.STANDARD_FORMAT, "module_name_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.module_name_index);
         String module_flags_str = getModuleFlag(obj.module_flags);
-        fm.format(format, "module_flags", HexUtils.toHex(bd.nextN(2)), module_flags_str);
-        fm.format(format, "module_version_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.module_version_index);
+        fm.format(FormatConst.STANDARD_FORMAT, "module_flags", HexUtils.toHex(bd.nextN(2)), module_flags_str);
+        fm.format(FormatConst.STANDARD_FORMAT, "module_version_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.module_version_index);
 
-        fm.format(format, "requires_count", HexUtils.toHex(bd.nextN(2)), obj.requires_count);
+        fm.format(FormatConst.STANDARD_FORMAT, "requires_count", HexUtils.toHex(bd.nextN(2)), obj.requires_count);
         for (int i = 0; i < obj.requires_count; i++) {
             ModuleRequires require = obj.requires[i];
             fm.format(prefix + "requires[%d] {%n", i);
             {
                 right_shift();
-                fm.format(prefix + format, "requires_index", HexUtils.toHex(bd.nextN(2)), "#" + require.requires_index);
-                fm.format(prefix + format, "requires_flags", HexUtils.toHex(bd.nextN(2)), getRequiresFlag(require.requires_flags));
-                fm.format(prefix + format, "requires_version_index", HexUtils.toHex(bd.nextN(2)), "#" + require.requires_version_index);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "requires_index", HexUtils.toHex(bd.nextN(2)), "#" + require.requires_index);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "requires_flags", HexUtils.toHex(bd.nextN(2)), getRequiresFlag(require.requires_flags));
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "requires_version_index", HexUtils.toHex(bd.nextN(2)), "#" + require.requires_version_index);
                 left_shift();
             }
             fm.format(prefix + "}%n");
         }
 
-        fm.format(format, "exports_count", HexUtils.toHex(bd.nextN(2)), obj.exports_count);
+        fm.format(FormatConst.STANDARD_FORMAT, "exports_count", HexUtils.toHex(bd.nextN(2)), obj.exports_count);
         for (int i = 0; i < obj.exports_count; i++) {
             ModuleExports export = obj.exports[i];
             fm.format(prefix + "exports[%d] {%n", i);
             {
                 right_shift();
-                fm.format(prefix + format, "exports_index", HexUtils.toHex(bd.nextN(2)), "#" + export.exports_index);
-                fm.format(prefix + format, "exports_flags", HexUtils.toHex(bd.nextN(2)), getExportsFlag(export.exports_flags));
-                fm.format(prefix + format, "exports_to_count", HexUtils.toHex(bd.nextN(2)), export.exports_to_count);
-                fm.format(prefix + format, "exports_to_index", HexUtils.toHex(bd.nextN(2 * export.exports_to_count)), array2str(export.exports_to_index));
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "exports_index", HexUtils.toHex(bd.nextN(2)), "#" + export.exports_index);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "exports_flags", HexUtils.toHex(bd.nextN(2)), getExportsFlag(export.exports_flags));
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "exports_to_count", HexUtils.toHex(bd.nextN(2)), export.exports_to_count);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "exports_to_index", HexUtils.toHex(bd.nextN(2 * export.exports_to_count)), array2str(export.exports_to_index));
                 left_shift();
             }
             fm.format(prefix + "}%n");
         }
 
-        fm.format(format, "opens_count", HexUtils.toHex(bd.nextN(2)), obj.opens_count);
+        fm.format(FormatConst.STANDARD_FORMAT, "opens_count", HexUtils.toHex(bd.nextN(2)), obj.opens_count);
         for (int i = 0; i < obj.opens_count; i++) {
             ModuleOpens opens = obj.opens[i];
             fm.format(prefix + "opens[%d] {%n", i);
             {
                 right_shift();
-                fm.format(prefix + format, "opens_index", HexUtils.toHex(bd.nextN(2)), "#" + opens.opens_index);
-                fm.format(prefix + format, "opens_flags", HexUtils.toHex(bd.nextN(2)), getOpensFlag(opens.opens_flags));
-                fm.format(prefix + format, "opens_to_count", HexUtils.toHex(bd.nextN(2)), opens.opens_to_count);
-                fm.format(prefix + format, "opens_to_index", HexUtils.toHex(bd.nextN(2 * opens.opens_to_count)), array2str(opens.opens_to_index));
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "opens_index", HexUtils.toHex(bd.nextN(2)), "#" + opens.opens_index);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "opens_flags", HexUtils.toHex(bd.nextN(2)), getOpensFlag(opens.opens_flags));
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "opens_to_count", HexUtils.toHex(bd.nextN(2)), opens.opens_to_count);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "opens_to_index", HexUtils.toHex(bd.nextN(2 * opens.opens_to_count)), array2str(opens.opens_to_index));
                 left_shift();
             }
             fm.format(prefix + "}%n");
         }
 
-        fm.format(format, "uses_count", HexUtils.toHex(bd.nextN(2)), obj.uses_count);
-        fm.format(format, "uses_index", HexUtils.toHex(bd.nextN(2 * obj.uses_count)), array2str(obj.uses_index));
+        fm.format(FormatConst.STANDARD_FORMAT, "uses_count", HexUtils.toHex(bd.nextN(2)), obj.uses_count);
+        fm.format(FormatConst.STANDARD_FORMAT, "uses_index", HexUtils.toHex(bd.nextN(2 * obj.uses_count)), array2str(obj.uses_index));
 
-        fm.format(format, "provides_count", HexUtils.toHex(bd.nextN(2)), obj.provides_count);
+        fm.format(FormatConst.STANDARD_FORMAT, "provides_count", HexUtils.toHex(bd.nextN(2)), obj.provides_count);
         for (int i = 0; i < obj.provides_count; i++) {
             ModuleProvides provides = obj.provides[i];
             fm.format(prefix + "provides[%d] {%n", i);
             {
                 right_shift();
-                fm.format(prefix + format, "provides_index", HexUtils.toHex(bd.nextN(2)), "#" + provides.provides_index);
-                fm.format(prefix + format, "provides_to_count", HexUtils.toHex(bd.nextN(2)), provides.provides_with_count);
-                fm.format(prefix + format, "provides_to_index", HexUtils.toHex(bd.nextN(2 * provides.provides_with_count)), array2str(provides.provides_with_index));
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "provides_index", HexUtils.toHex(bd.nextN(2)), "#" + provides.provides_index);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "provides_to_count", HexUtils.toHex(bd.nextN(2)), provides.provides_with_count);
+                fm.format(prefix + FormatConst.STANDARD_FORMAT, "provides_to_index", HexUtils.toHex(bd.nextN(2 * provides.provides_with_count)), array2str(provides.provides_with_index));
                 left_shift();
             }
             fm.format(prefix + "}%n");
@@ -1130,10 +1116,9 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         int attribute_name_index = obj.attribute_name_index;
         int attribute_length = obj.attribute_length;
 
-        String format = "%-20s='%s' (%s)";
-        String attribute_name_line = String.format(format, "attribute_name_index", HexUtils.toHex(bd.nextN(2)), "#" + attribute_name_index);
-        String attribute_length_line = String.format(format, "attribute_length", HexUtils.toHex(bd.nextN(4)), attribute_length);
-        System.out.println(attribute_name_line);
-        System.out.println(attribute_length_line);
+        String attribute_name_line = String.format(FormatConst.STANDARD_FORMAT, "attribute_name_index", HexUtils.toHex(bd.nextN(2)), "#" + attribute_name_index);
+        String attribute_length_line = String.format(FormatConst.STANDARD_FORMAT, "attribute_length", HexUtils.toHex(bd.nextN(4)), attribute_length);
+        System.out.print(attribute_name_line);
+        System.out.print(attribute_length_line);
     }
 }
