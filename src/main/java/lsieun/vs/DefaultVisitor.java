@@ -270,5 +270,15 @@ public class DefaultVisitor implements Visitor {
     public void visitModule(Module obj) {
         visitAttributeInfo(obj);
     }
+
+    @Override
+    public void visitModulePackages(ModulePackages obj) {
+        visitAttributeInfo(obj);
+    }
+
+    @Override
+    public void visitModuleMainClass(ModuleMainClass obj) {
+        visitAttributeInfo(obj);
+    }
     // endregion
 }

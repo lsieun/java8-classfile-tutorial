@@ -1112,6 +1112,29 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         return list.toString();
     }
 
+    @Override
+    public void visitModulePackages(ModulePackages obj) {
+        byte[] bytes = obj.bytes;
+        ByteDashboard bd = new ByteDashboard(bytes);
+        visitAttributeCommon(obj, bd);
+
+        StringBuilder sb = new StringBuilder();
+        Formatter fm = new Formatter(sb);
+        fm.format(FormatConst.STANDARD_FORMAT, "package_count", HexUtils.toHex(bd.nextN(2)), "#" + obj.package_count);
+        fm.format(FormatConst.STANDARD_FORMAT, "package_index", HexUtils.toHex(bd.nextN(2 * obj.package_count)), array2str(obj.package_index));
+        System.out.println(sb);
+    }
+
+    @Override
+    public void visitModuleMainClass(ModuleMainClass obj) {
+        byte[] bytes = obj.bytes;
+        ByteDashboard bd = new ByteDashboard(bytes);
+        visitAttributeCommon(obj, bd);
+
+        String line = String.format(FormatConst.STANDARD_FORMAT, "main_class_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.main_class_index);
+        System.out.println(line);
+    }
+
     public void visitAttributeCommon(AttributeInfo obj, ByteDashboard bd) {
         int attribute_name_index = obj.attribute_name_index;
         int attribute_length = obj.attribute_length;

@@ -103,6 +103,12 @@ public class AttributeInfo extends Node {
         else if ("Module".equals(name)) {
             instance = new Module(bd, cp);
         }
+        else if ("ModulePackages".equals(name)) {
+            instance = new ModulePackages(bd, cp);
+        }
+        else if ("ModuleMainClass".equals(name)) {
+            instance = new ModuleMainClass(bd, cp);
+        }
         else {
             throw new RuntimeException("Unknown Attribute Name: " + name);
 //            instance = new AttributeInfo(bd, cp);

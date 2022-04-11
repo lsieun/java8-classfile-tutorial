@@ -72,18 +72,30 @@ public final class ConstantPool extends Node {
             if (tag == CPConst.CONSTANT_Class) {
                 ConstantClass sub = (ConstantClass) item;
                 item.value = this.getConstantString(sub.name_index, CPConst.CONSTANT_Utf8);
-            } else if (tag == CPConst.CONSTANT_String) {
+            }
+            else if (tag == CPConst.CONSTANT_String) {
                 ConstantString sub = (ConstantString) item;
                 item.value = this.getConstantString(sub.string_index, CPConst.CONSTANT_Utf8);
-            } else if (tag == CPConst.CONSTANT_NameAndType) {
+            }
+            else if (tag == CPConst.CONSTANT_NameAndType) {
                 ConstantNameAndType sub = (ConstantNameAndType) item;
                 String name = this.getConstantString(sub.name_index, CPConst.CONSTANT_Utf8);
                 String descriptor = this.getConstantString(sub.descriptor_index, CPConst.CONSTANT_Utf8);
                 item.value = name + ":" + descriptor;
-            } else if (tag == CPConst.CONSTANT_MethodType) {
+            }
+            else if (tag == CPConst.CONSTANT_MethodType) {
                 ConstantMethodType sub = (ConstantMethodType) item;
                 item.value = this.getConstantString(sub.descriptor_index, CPConst.CONSTANT_Utf8);
-            } else {
+            }
+            else if (tag == CPConst.CONSTANT_Module) {
+                ConstantModule sub = (ConstantModule) item;
+                item.value = this.getConstantString(sub.name_index, CPConst.CONSTANT_Utf8);
+            }
+            else if (tag == CPConst.CONSTANT_Package) {
+                ConstantPackage sub = (ConstantPackage) item;
+                item.value = this.getConstantString(sub.name_index, CPConst.CONSTANT_Utf8);
+            }
+            else {
                 // do nothing
             }
         }
@@ -99,7 +111,8 @@ public final class ConstantPool extends Node {
                 String className = this.getConstantString(classIndex, CPConst.CONSTANT_Class);
                 String nameAndType = this.getConstantString(nameAndTypeIndex, CPConst.CONSTANT_NameAndType);
                 item.value = className + "." + nameAndType;
-            } else if (tag == CPConst.CONSTANT_Methodref) {
+            }
+            else if (tag == CPConst.CONSTANT_Methodref) {
                 ConstantMethodref sub = (ConstantMethodref) item;
                 int classIndex = sub.getClassIndex();
                 int nameAndTypeIndex = sub.getNameAndTypeIndex();
@@ -107,7 +120,8 @@ public final class ConstantPool extends Node {
                 String className = this.getConstantString(classIndex, CPConst.CONSTANT_Class);
                 String nameAndType = this.getConstantString(nameAndTypeIndex, CPConst.CONSTANT_NameAndType);
                 item.value = className + "." + nameAndType;
-            } else if (tag == CPConst.CONSTANT_InterfaceMethodref) {
+            }
+            else if (tag == CPConst.CONSTANT_InterfaceMethodref) {
                 ConstantInterfaceMethodref sub = (ConstantInterfaceMethodref) item;
                 int classIndex = sub.getClassIndex();
                 int nameAndTypeIndex = sub.getNameAndTypeIndex();
@@ -115,13 +129,16 @@ public final class ConstantPool extends Node {
                 String className = this.getConstantString(classIndex, CPConst.CONSTANT_Class);
                 String nameAndType = this.getConstantString(nameAndTypeIndex, CPConst.CONSTANT_NameAndType);
                 item.value = className + "." + nameAndType;
-            } else if (tag == CPConst.CONSTANT_Dynamic) {
+            }
+            else if (tag == CPConst.CONSTANT_Dynamic) {
                 ConstantDynamic sub = (ConstantDynamic) item;
                 item.value = this.getConstantString(sub.name_and_type_index, CPConst.CONSTANT_NameAndType);
-            } else if (tag == CPConst.CONSTANT_InvokeDynamic) {
+            }
+            else if (tag == CPConst.CONSTANT_InvokeDynamic) {
                 ConstantInvokeDynamic sub = (ConstantInvokeDynamic) item;
                 item.value = "#" + sub.bootstrap_method_attr_index + ":" + this.getConstantString(sub.name_and_type_index, CPConst.CONSTANT_NameAndType);
-            } else {
+            }
+            else {
                 // do nothing
             }
         }

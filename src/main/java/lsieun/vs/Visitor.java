@@ -114,5 +114,9 @@ public interface Visitor {
     void visitStackMapTable(StackMapTable obj);
 
     void visitModule(Module obj);
+
+    void visitModulePackages(ModulePackages obj);
+
+    void visitModuleMainClass(ModuleMainClass obj);
     // endregion
 }
