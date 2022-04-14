@@ -280,5 +280,26 @@ public class DefaultVisitor implements Visitor {
     public void visitModuleMainClass(ModuleMainClass obj) {
         visitAttributeInfo(obj);
     }
+
+    @Override
+    public void visitNestHost(NestHost obj) {
+        visitAttributeInfo(obj);
+    }
+
+    @Override
+    public void visitNestMembers(NestMembers obj) {
+        visitAttributeInfo(obj);
+    }
+
+    @Override
+    public void visitRecord(Record obj) {
+        visitAttributeInfo(obj);
+    }
+
+    @Override
+    public void visitPermittedSubclasses(PermittedSubclasses obj) {
+        visitAttributeInfo(obj);
+    }
+
     // endregion
 }

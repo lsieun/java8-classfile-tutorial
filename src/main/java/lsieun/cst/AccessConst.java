@@ -47,7 +47,7 @@ public class AccessConst {
     public static final int ACCESS_NAMES_LENGTH = ACCESS_NAMES.length;
 
     /**
-     * @param index
+     * @param index the array index
      * @return the ACCESS_NAMES entry at the given index
      */
     public static String getAccessName(final int index) {
@@ -67,7 +67,7 @@ public class AccessConst {
     }
 
     public static String getAccessFlagsString(int accessFlags, int type) {
-        List<String> list = new ArrayList();
+        List<String> list = new ArrayList<>();
         if(BitUtils.hasBit(accessFlags, 1)) {
             list.add("ACC_PUBLIC");
         }
@@ -132,12 +132,11 @@ public class AccessConst {
             list.add("ACC_MODULE");
         }
 
-        String str = StringUtils.list2str(list, "[", "]", ",");
-        return str;
+        return StringUtils.list2str(list, "[", "]", ",");
     }
 
     public static String getInnerClassAccessFlagsString(int accessFlags) {
-        List<String> list = new ArrayList();
+        List<String> list = new ArrayList<>();
         if(BitUtils.hasBit(accessFlags, 1)) {
             list.add("ACC_PUBLIC");
         }
@@ -169,12 +168,11 @@ public class AccessConst {
             list.add("ACC_ENUM");
         }
 
-        String str = StringUtils.list2str(list, "[", "]", ",");
-        return str;
+        return StringUtils.list2str(list, "[", "]", ",");
     }
 
     public static String getMethodParameterAccessFlagsString(int accessFlags) {
-        List<String> list = new ArrayList();
+        List<String> list = new ArrayList<>();
         if(BitUtils.hasBit(accessFlags, 5)) {
             list.add("ACC_FINAL");
         }
@@ -185,8 +183,7 @@ public class AccessConst {
             list.add("ACC_MANDATED");
         }
 
-        String str = StringUtils.list2str(list, "[", "]", ",");
-        return str;
+        return StringUtils.list2str(list, "[", "]", ",");
     }
 
     public static boolean isStatic(int accessFlags) {

@@ -118,5 +118,13 @@ public interface Visitor {
     void visitModulePackages(ModulePackages obj);
 
     void visitModuleMainClass(ModuleMainClass obj);
+
+    void visitNestHost(NestHost obj);
+
+    void visitNestMembers(NestMembers obj);
+
+    void visitRecord(Record obj);
+
+    void visitPermittedSubclasses(PermittedSubclasses obj);
     // endregion
 }

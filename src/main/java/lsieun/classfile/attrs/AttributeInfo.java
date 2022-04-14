@@ -109,6 +109,18 @@ public class AttributeInfo extends Node {
         else if ("ModuleMainClass".equals(name)) {
             instance = new ModuleMainClass(bd, cp);
         }
+        else if ("NestHost".equals(name)) {
+            instance = new NestHost(bd, cp);
+        }
+        else if ("NestMembers".equals(name)) {
+            instance = new NestMembers(bd, cp);
+        }
+        else if ("Record".equals(name)) {
+            instance = new Record(bd, cp);
+        }
+        else if ("PermittedSubclasses".equals(name)) {
+            instance = new PermittedSubclasses(bd, cp);
+        }
         else {
             throw new RuntimeException("Unknown Attribute Name: " + name);
 //            instance = new AttributeInfo(bd, cp);

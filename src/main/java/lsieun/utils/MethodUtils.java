@@ -15,12 +15,12 @@ public class MethodUtils {
     }
 
     public static MethodInfo findMethod(Methods methods, String nameAndType) {
-        if(StringUtils.isBlank(nameAndType)) return null;
+        if (StringUtils.isBlank(nameAndType)) return null;
 
         MethodInfo[] entries = methods.entries;
-        for(MethodInfo item: entries) {
+        for (MethodInfo item : entries) {
             String value = item.value;
-            if(nameAndType.equals(value)) {
+            if (nameAndType.equals(value)) {
                 return item;
             }
         }
@@ -37,15 +37,15 @@ public class MethodUtils {
 
     public static void displayAvailableMethods(Methods methods) {
         MethodInfo[] entries = methods.entries;
-        if(entries != null && entries.length > 0) {
+        if (entries != null && entries.length > 0) {
             System.out.println("\nAvailable Methods:");
-            for(MethodInfo item : entries) {
+            for (MethodInfo item : entries) {
                 Attributes attributes = item.attributes;
                 String attrNames = AttributeUtils.getAttributeNames(attributes);
 
                 String codeAttrs = "";
                 AttributeInfo codeAttribute = AttributeUtils.findAttribute(attributes, "Code");
-                if(codeAttribute != null) {
+                if (codeAttribute != null) {
                     Code code = (Code) codeAttribute;
                     codeAttrs = AttributeUtils.getAttributeNames(code.attributes);
                 }
@@ -59,8 +59,8 @@ public class MethodUtils {
 
     public static String getMethodNames(Methods methods) {
         MethodInfo[] entries = methods.entries;
-        List<String> list = new ArrayList();
-        for(MethodInfo item : entries) {
+        List<String> list = new ArrayList<>();
+        for (MethodInfo item : entries) {
             String value = item.value;
             list.add(value);
         }
@@ -73,6 +73,7 @@ public class MethodUtils {
 
         String name = cp.getConstant(name_index).value;
         String descriptor = cp.getConstant(descriptor_index).value;
-        System.out.println(String.format("Method %s:%s", name, descriptor));
+        String line = String.format("Method %s:%s", name, descriptor);
+        System.out.println(line);
     }
 }

@@ -18,53 +18,33 @@ import java.util.Formatter;
 import java.util.List;
 
 public class AttributeStandardVisitor extends DefaultVisitor {
-    public static final String INDENT_00_SPACE = "";
-    public static final String INDENT_04_SPACE = "    ";
-    public static final String INDENT_08_SPACE = "        ";
-    public static final String INDENT_12_SPACE = "            ";
-    public static final String INDENT_16_SPACE = "                ";
+    private static final String[] INDENT_ARRAY = new String[20];
+
+    static {
+        INDENT_ARRAY[0] = "";
+        for (int i = 1; i < INDENT_ARRAY.length; i++) {
+            INDENT_ARRAY[i] = INDENT_ARRAY[i - 1] + "    ";
+        }
+    }
 
     private final ConstantPool constant_pool;
     private String prefix;
 
     public AttributeStandardVisitor(ConstantPool constant_pool) {
         this.constant_pool = constant_pool;
-        this.prefix = INDENT_00_SPACE;
+        this.prefix = INDENT_ARRAY[0];
     }
 
     private void left_shift() {
         int length = prefix.length();
-        if (length > 16) {
-            prefix = INDENT_16_SPACE;
-        }
-        else if (length > 12) {
-            prefix = INDENT_12_SPACE;
-        }
-        else if (length > 8) {
-            prefix = INDENT_08_SPACE;
-        }
-        else if (length > 4) {
-            prefix = INDENT_04_SPACE;
-        }
-        else {
-            prefix = INDENT_00_SPACE;
-        }
+        int index = length / 4;
+        prefix = INDENT_ARRAY[index - 1];
     }
 
     private void right_shift() {
         int length = prefix.length();
-        if (length < 4) {
-            prefix = INDENT_04_SPACE;
-        }
-        else if (length < 8) {
-            prefix = INDENT_08_SPACE;
-        }
-        else if (length < 12) {
-            prefix = INDENT_12_SPACE;
-        }
-        else {
-            prefix = INDENT_16_SPACE;
-        }
+        int index = length / 4;
+        prefix = INDENT_ARRAY[index + 1];
     }
 
     @Override
@@ -138,7 +118,7 @@ public class AttributeStandardVisitor extends DefaultVisitor {
                 fm.format(prefix + "}%n");
             }
         }
-        System.out.print(sb);
+        System.out.println(sb);
     }
 
     public static String array2str(int[] array) {
@@ -1135,12 +1115,79 @@ public class AttributeStandardVisitor extends DefaultVisitor {
         System.out.println(line);
     }
 
+    @Override
+    public void visitNestHost(NestHost obj) {
+        byte[] bytes = obj.bytes;
+        ByteDashboard bd = new ByteDashboard(bytes);
+        visitAttributeCommon(obj, bd);
+
+        String line = String.format(FormatConst.STANDARD_FORMAT, "host_class_index", HexUtils.toHex(bd.nextN(2)), "#" + obj.host_class_index);
+        System.out.println(line);
+    }
+
+    @Override
+    public void visitNestMembers(NestMembers obj) {
+        byte[] bytes = obj.bytes;
+        ByteDashboard bd = new ByteDashboard(bytes);
+        visitAttributeCommon(obj, bd);
+
+        StringBuilder sb = new StringBuilder();
+        Formatter fm = new Formatter(sb);
+        fm.format(FormatConst.STANDARD_FORMAT, "number_of_classes", HexUtils.toHex(bd.nextN(2)), obj.number_of_classes);
+        fm.format(FormatConst.STANDARD_FORMAT, "classes", HexUtils.toHex(bd.nextN(2 * obj.number_of_classes)), array2str(obj.classes));
+        System.out.println(sb);
+    }
+
+    @Override
+    public void visitRecord(Record obj) {
+        byte[] bytes = obj.bytes;
+        ByteDashboard bd = new ByteDashboard(bytes);
+        visitAttributeCommon(obj, bd);
+
+
+        String line = String.format(prefix + FormatConst.STANDARD_FORMAT, "components_count", HexUtils.toHex(bd.nextN(2)), obj.components_count);
+        System.out.print(line);
+        for (int i = 0; i < obj.components_count; i++) {
+            StringBuilder sb = new StringBuilder();
+            Formatter fm = new Formatter(sb);
+            RecordComponent component = obj.components[i];
+            fm.format(prefix + "components[%d] {%n", i);
+            right_shift();
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "name_index", HexUtils.toHex(bd.nextN(2)), "#" + component.name_index);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "descriptor_index", HexUtils.toHex(bd.nextN(2)), "#" + component.descriptor_index);
+            fm.format(prefix + FormatConst.STANDARD_FORMAT, "attributes_count", HexUtils.toHex(bd.nextN(2)), component.attributes.attributes_count);
+            System.out.print(sb);
+            for (int j = 0; j < component.attributes.attributes_count; j++) {
+                right_shift();
+                component.attributes.entries[j].accept(this);
+                left_shift();
+            }
+            left_shift();
+            String line2 = String.format(prefix + "}%n");
+            System.out.print(line2);
+        }
+        System.out.println();
+    }
+
+    @Override
+    public void visitPermittedSubclasses(PermittedSubclasses obj) {
+        byte[] bytes = obj.bytes;
+        ByteDashboard bd = new ByteDashboard(bytes);
+        visitAttributeCommon(obj, bd);
+
+        StringBuilder sb = new StringBuilder();
+        Formatter fm = new Formatter(sb);
+        fm.format(FormatConst.STANDARD_FORMAT, "number_of_classes", HexUtils.toHex(bd.nextN(2)), obj.number_of_classes);
+        fm.format(FormatConst.STANDARD_FORMAT, "classes", HexUtils.toHex(bd.nextN(2 * obj.number_of_classes)), array2str(obj.classes));
+        System.out.println(sb);
+    }
+
     public void visitAttributeCommon(AttributeInfo obj, ByteDashboard bd) {
         int attribute_name_index = obj.attribute_name_index;
         int attribute_length = obj.attribute_length;
 
-        String attribute_name_line = String.format(FormatConst.STANDARD_FORMAT, "attribute_name_index", HexUtils.toHex(bd.nextN(2)), "#" + attribute_name_index);
-        String attribute_length_line = String.format(FormatConst.STANDARD_FORMAT, "attribute_length", HexUtils.toHex(bd.nextN(4)), attribute_length);
+        String attribute_name_line = String.format(prefix + FormatConst.STANDARD_FORMAT, "attribute_name_index", HexUtils.toHex(bd.nextN(2)), "#" + attribute_name_index);
+        String attribute_length_line = String.format(prefix + FormatConst.STANDARD_FORMAT, "attribute_length", HexUtils.toHex(bd.nextN(4)), attribute_length);
         System.out.print(attribute_name_line);
         System.out.print(attribute_length_line);
     }
